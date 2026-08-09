@@ -1,17 +1,26 @@
-# SON Təmizlik Məhsulları
+# SON Cleaning Store
 
-Modern və funksional bir təmizlik məhsulları e-ticarət saytı. Next.js 15, TypeScript, Tailwind CSS və Prisma ilə hazırlanmışdır.
+A full-stack commerce website for cleaning products with catalog, admin, authentication, and contact workflows.
 
-## 🌟 Xüsusiyyətlər
+| Field | Value |
+| --- | --- |
+| Focus | E-commerce engineering |
+| Status | Active portfolio project |
 
-### 🎯 Ana Funksiyalar
+## Overview
+
+A full-stack commerce website for cleaning products with catalog, admin, authentication, and contact workflows.
+
+## Features
+
+### Ana Funksiyalar
 - **Məhsul Kataloqu** - Kateqoriyalar üzrə filtrlənə bilən məhsul siyahısı
 - **Əlaqə Formu** - EmailJS inteqrasiyası ilə birbaşa e-poçt göndərmə
 - **Admin Paneli** - Məhsul və kateqoriya idarəetməsi
 - **Şəkil Yükləmə** - Məhsul şəkillərinin local və ya URL vasitəsilə əlavə edilməsi
 - **Responsive Dizayn** - Bütün cihazlarda mükəmməl görünüm
 
-### 🔧 Texniki Xüsusiyyətlər
+### Texniki Xüsusiyyətlər
 - **Next.js 15** - App Router və Server Actions
 - **TypeScript** - Tam tip təhlükəsizliyi
 - **Prisma ORM** - PostgreSQL inteqrasiyası
@@ -21,7 +30,7 @@ Modern və funksional bir təmizlik məhsulları e-ticarət saytı. Next.js 15, 
 - **Zod Validation** - Form validasiyası
 - **EmailJS** - E-poçt göndərmə
 
-## 🚀 Texnologiyalar
+## Technology
 
 - **Frontend:** Next.js 15, React 19, TypeScript
 - **Backend:** Next.js API Routes, Server Actions
@@ -33,7 +42,7 @@ Modern və funksional bir təmizlik məhsulları e-ticarət saytı. Next.js 15, 
 - **Email:** EmailJS
 - **Deployment:** Vercel/VPS ready
 
-## 🚀 Qısa Başlanğıc
+## Qısa Başlanğıc
 
 1. **Dependency-ləri quraşdırın:**
    ```bash
@@ -57,28 +66,28 @@ Modern və funksional bir təmizlik məhsulları e-ticarət saytı. Next.js 15, 
    npm run dev
    ```
 
-## 📁 Proyekt Strukturu
+## Proyekt Strukturu
 
 ```
 son/
-├── app/                    # Next.js App Router
-│   ├── admin/             # Admin panel səhifələri
-│   ├── api/               # API routes
-│   ├── products/          # Məhsul səhifələri
-│   └── layout.tsx         # Root layout
-├── components/            # React komponentləri
-│   ├── ui/               # Shadcn-ui komponentləri
-│   ├── forms/            # Form komponentləri
-│   ├── layout/           # Layout komponentləri
-│   ├── products/         # Məhsul komponentləri
-│   └── animations/       # Animasiya komponentləri
-├── lib/                  # Utility funksiyaları
-├── actions/              # Server Actions
-├── prisma/               # Database schema və seed
-└── public/              # Static fayllar
+ app/                    # Next.js App Router
+    admin/             # Admin panel səhifələri
+    api/               # API routes
+    products/          # Məhsul səhifələri
+    layout.tsx         # Root layout
+ components/            # React komponentləri
+    ui/               # Shadcn-ui komponentləri
+    forms/            # Form komponentləri
+    layout/           # Layout komponentləri
+    products/         # Məhsul komponentləri
+    animations/       # Animasiya komponentləri
+ lib/                  # Utility funksiyaları
+ actions/              # Server Actions
+ prisma/               # Database schema və seed
+ public/              # Static fayllar
 ```
 
-## 📱 Səhifələr
+## Səhifələr
 
 ### İctimai Səhifələr
 - **Ana Səhifə** (`/`) - Hero, kateqoriyalar, featured məhsullar, əlaqə
@@ -90,7 +99,7 @@ son/
 - **Kateqoriyalar** (`/admin/categories`) - Kateqoriya idarəetməsi
 - **Mesajlar** (`/admin/messages`) - Əlaqə mesajları
 
-## 🔐 Təhlükəsizlik
+## Security
 
 - **JWT Authentication** - 7 günlük token müddəti
 - **HTTP-only Cookies** - XSS qarşısında qorunma
@@ -98,7 +107,7 @@ son/
 - **File Upload Validation** - Təhlükəsiz fayl yükləmə
 - **Security Headers** - CSP, XSS, CSRF qorunması
 
-## 📊 Performance
+## Performance
 
 - **Core Web Vitals** optimizasiyası
 - **Image Optimization** - Next.js Image komponent
@@ -107,4 +116,15 @@ son/
 
 ---
 
-**SON** - Təmizlik məhsullarında keyfiyyət və etimad! 🧽✨
+**SON** - Təmizlik məhsullarında keyfiyyət və etimad!
+
+## Repository
+
+```bash
+git clone https://github.com/hasan0v/son-cleaning-store.git
+cd son-cleaning-store
+```
+
+## Status
+
+Active portfolio project.
