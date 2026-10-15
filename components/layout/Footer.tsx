@@ -1,78 +1,80 @@
 import Image from 'next/image'
+import Link from 'next/link'
+import { MapPin, FileText, Factory, ArrowUpRight } from 'lucide-react'
+import HideOnAdmin from './HideOnAdmin'
+
+const nav = [
+  { href: '/products', label: 'Bütün məhsullar' },
+  { href: '/products?category=qabyuyan-maye', label: 'Qabyuyan maye' },
+  { href: '/products?category=maye-sabun', label: 'Maye sabun' },
+  { href: '/products?category=duru-agardici', label: 'Ağardıcılar' },
+  { href: '/#faq', label: 'Tez-tez verilən suallar' },
+]
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
-  
+
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          {/* Company Info */}
-          <div className="space-y-4">
-            <div>
-              <div className="mb-4">
-                <Image 
-                  src="/logo.png" 
-                  alt="SON Logo" 
-                  width={80} 
-                  height={80} 
-                  style={{ width: '80px', height: 'auto' }}
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-gray-600 font-medium mb-3">
-                Təmizlik Məhsulları
-              </p>
-              <p className="text-gray-500 leading-relaxed">
-                Keyfiyyətli məhsullar, etibarlı xidmət. 
-                Peşəkar təmizlik həllərinin etibarlı tərəfdaşı.
+    <HideOnAdmin>
+      <footer className="relative overflow-hidden bg-brand-ink text-slate-300">
+        <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 size-[28rem] rounded-full bg-brand-blue/20 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+          <div className="grid gap-12 md:grid-cols-12">
+            <div className="md:col-span-5">
+              <Link href="/" aria-label="SON — ana səhifə" className="inline-flex rounded-2xl bg-white px-4 py-3">
+                <Image src="/brand/son-logo.png" alt="SON" width={480} height={335} className="h-12 w-auto" />
+              </Link>
+              <p className="mt-6 max-w-sm leading-relaxed text-slate-400">
+                Keyfiyyətli məhsullar, etibarlı xidmət. Ev və peşəkar təmizlik üçün Gəncədən bütün Azərbaycana.
               </p>
             </div>
-          </div>
-          
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Əlaqə Məlumatları</h3>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <div>
-                  <p className="text-gray-700 font-medium">Gəncə şəhəri</p>
-                  <p className="text-gray-500">Zülfü Hacıyev 56</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <p className="text-gray-500">VÖEN: 2306001922</p>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <p className="text-gray-500">İstehsalçı: Ə. Müseyib Azər</p>
-              </div>
+
+            <nav className="md:col-span-3" aria-label="Footer naviqasiyası">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-white">Kataloq</h2>
+              <ul className="mt-5 space-y-3">
+                {nav.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="transition-colors hover:text-white">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="md:col-span-4">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-white">Əlaqə məlumatları</h2>
+              <ul className="mt-5 space-y-4">
+                <li className="flex gap-3">
+                  <MapPin className="mt-0.5 size-5 shrink-0 text-brand-sky" aria-hidden />
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Z%C3%BClf%C3%BC+Hac%C4%B1yev+56+G%C9%99nc%C9%99"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group transition-colors hover:text-white"
+                  >
+                    Gəncə şəhəri, Zülfü Hacıyev 56
+                    <ArrowUpRight className="ml-1 inline size-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+                  </a>
+                </li>
+                <li className="flex gap-3">
+                  <FileText className="mt-0.5 size-5 shrink-0 text-brand-sky" aria-hidden />
+                  <span>VÖEN: 2306001922</span>
+                </li>
+                <li className="flex gap-3">
+                  <Factory className="mt-0.5 size-5 shrink-0 text-brand-sky" aria-hidden />
+                  <span>İstehsalçı: Ə. Müseyib Azər</span>
+                </li>
+              </ul>
             </div>
           </div>
-        </div>
-        
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-500">
-              © {currentYear} SON Təmizlik Məhsulları. Bütün hüquqlar qorunur.
-            </p>
-            <p className="text-sm text-gray-400">
-              Peşəkar təmizlik həlləri
-            </p>
+
+          <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>© {currentYear} SON Təmizlik Məhsulları. Bütün hüquqlar qorunur.</p>
+            <p>Peşəkar təmizlik həlləri</p>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </HideOnAdmin>
   )
 }

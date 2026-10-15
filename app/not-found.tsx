@@ -1,33 +1,21 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { SearchX } from 'lucide-react'
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="text-6xl mb-4">🔍</div>
-          <CardTitle>Səhifə Tapılmadı</CardTitle>
-          <CardDescription>
-            Axtardığınız səhifə mövcud deyil və ya köçürülüb.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-4">
-            <Link href="/" className="flex-1">
-              <Button className="w-full">
-                Ana Səhifə
-              </Button>
-            </Link>
-            <Link href="/products" className="flex-1">
-              <Button variant="outline" className="w-full">
-                Məhsullar
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <section className="grid min-h-[80vh] place-items-center px-4 pb-16 pt-32">
+      <div className="max-w-md text-center">
+        <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-brand-mist text-brand-blue">
+          <SearchX className="size-8" aria-hidden />
+        </span>
+        <p className="mt-6 font-display text-6xl font-extrabold text-brand-ink">404</p>
+        <h1 className="mt-3 text-2xl font-bold text-brand-ink">Səhifə tapılmadı</h1>
+        <p className="mt-3 text-slate-600">Axtardığınız səhifə mövcud deyil və ya köçürülüb.</p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link href="/" className="btn-primary">Ana səhifə</Link>
+          <Link href="/products" className="btn-outline">Məhsullar</Link>
+        </div>
+      </div>
+    </section>
   )
 }

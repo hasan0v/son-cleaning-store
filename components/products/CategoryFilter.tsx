@@ -1,56 +1,53 @@
-'use client'
-
-import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 interface Category {
   slug: string
   name: string
+  count: number
 }
 
 interface CategoryFilterProps {
   categories: Category[]
+  selected?: string
+  total: number
 }
 
-export default function CategoryFilter({ categories }: CategoryFilterProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedCategory = searchParams.get('category') || ''
-
-  const handleCategoryChange = (categorySlug: string) => {
-    if (categorySlug) {
-      router.push(`/products?category=${categorySlug}`)
-    } else {
-      router.push('/products')
-    }
-  }
+export default function CategoryFilter({ categories, selected, total }: CategoryFilterProps) {
+  const items = [{ slug: '', name: 'Hamısı', count: total }, ...categories]
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-      <label className="text-sm font-medium text-gray-700">
-        Kateqoriya:
-      </label>
-      
-      <select
-        className="border border-gray-300 rounded-md px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent"
-        value={selectedCategory}
-        onChange={(e) => handleCategoryChange(e.target.value)}
-      >
-        <option value="">Bütün kateqoriyalar</option>
-        {categories.map((category) => (
-          <option key={category.slug} value={category.slug}>
-            {category.name}
-          </option>
-        ))}
-      </select>
-      
-      {selectedCategory && (
-        <button
-          onClick={() => handleCategoryChange('')}
-          className="text-sm text-gray-500 hover:text-gray-700 underline"
-        >
-          Filtri təmizlə
-        </button>
-      )}
-    </div>
+    <nav aria-label="Kateqoriyalar" className="-mx-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
+      <ul className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+        {items.map((category) => {
+          const active = (selected ?? '') === category.slug
+          return (
+            <li key={category.slug || 'all'}>
+              <Link
+                href={category.slug ? `/products?category=${category.slug}` : '/products'}
+                scroll={false}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors',
+                  active
+                    ? 'border-brand-ink bg-brand-ink text-white'
+                    : 'border-border bg-white text-slate-600 hover:border-brand-blue/40 hover:text-brand-ink'
+                )}
+              >
+                {category.name}
+                <span
+                  className={cn(
+                    'rounded-full px-1.5 text-xs tabular-nums',
+                    active ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500'
+                  )}
+                >
+                  {category.count}
+                </span>
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
   )
 }

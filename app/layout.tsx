@@ -1,34 +1,32 @@
-import type { Metadata } from "next";
-import { Inter, Poppins, Nunito } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Providers from "@/components/layout/Providers";
 import { Toaster } from "@/components/ui/sonner";
 import { organizationSchema, localBusinessSchema, websiteSchema } from "@/lib/schema";
 
-const inter = Inter({ 
-  subsets: ["latin"], 
+// latin-ext carries the Azerbaijani letters (ə, ğ, ı, ş); without it they fall back to a system font
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
   variable: "--font-inter",
-  weight: ["400", "500"],
-  display: 'swap',
-  preload: true,
+  display: "swap",
 });
 
-const poppins = Poppins({ 
-  subsets: ["latin"], 
-  variable: "--font-poppins", 
-  weight: ["600", "700"],
-  display: 'swap',
-  preload: true,
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-jakarta",
+  display: "swap",
 });
 
-const nunito = Nunito({ 
-  subsets: ["latin"], 
-  variable: "--font-nunito", 
-  weight: ["500", "600", "700"],
-  display: 'swap',
-  preload: true,
-});
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0b1f33",
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   title: "SON Təmizlik Məhsulları | Qabyuyan Maye, Ağardıcı, Təmizlik Vasitələri Gəncə",
@@ -38,6 +36,10 @@ export const metadata: Metadata = {
   creator: "SON Təmizlik Məhsulları",
   publisher: "SON Təmizlik Məhsulları",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://son-temizlik.com'),
+  icons: {
+    icon: [{ url: "/favicon.ico" }, { url: "/brand/icon-256.png", type: "image/png", sizes: "256x256" }],
+    apple: "/brand/apple-touch-icon.png",
+  },
   openGraph: {
     type: 'website',
     locale: 'az_AZ',
@@ -47,7 +49,7 @@ export const metadata: Metadata = {
     url: 'https://son-temizlik.com',
     images: [
       {
-        url: '/logo.png',
+        url: '/brand/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'SON Təmizlik Məhsulları Logo',
@@ -58,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SON Təmizlik Məhsulları | Gəncə',
     description: 'Keyfiyyətli təmizlik məhsulları - qabyuyan maye, ağardıcı, təmizlik vasitələri. Topdan və pərakəndə satış.',
-    images: ['/logo.png'],
+    images: ['/brand/og-image.jpg'],
   },
   alternates: {
     canonical: 'https://son-temizlik.com',
@@ -83,51 +85,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="az" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="az" className={`${inter.variable} ${jakarta.variable}`} data-scroll-behavior="smooth">
       <head>
-        {/* Favicon */}
-        <link rel="icon" href="/logo.ico" />
-        <link rel="apple-touch-icon" href="/logo.png" />
-        
-        {/* Preconnect for external resources */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
-        {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="https://api.emailjs.com" />
-        
-        {/* Optimize viewport for performance */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        
-        {/* Theme and PWA */}
-        <meta name="theme-color" content="#1e40af" />
-        <meta name="color-scheme" content="light" />
-        
-        {/* Structured Data for SEO */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(localBusinessSchema),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteSchema),
+            __html: JSON.stringify([organizationSchema, localBusinessSchema, websiteSchema]),
           }}
         />
       </head>
-      <body className={`${inter.variable} ${poppins.variable} ${nunito.variable} font-sans bg-white text-gray-900 antialiased`}>
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
-        <Toaster />
+      <body className="min-h-dvh bg-white text-brand-ink antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:shadow-lift"
+        >
+          Əsas məzmuna keç
+        </a>
+        <Providers>
+          <Navbar />
+          <main id="main" className="min-h-[60vh]">{children}</main>
+          <Footer />
+        </Providers>
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

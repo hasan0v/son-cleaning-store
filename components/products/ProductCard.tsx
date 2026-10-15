@@ -1,7 +1,5 @@
-'use client'
-
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { Package } from 'lucide-react'
 
 interface Product {
   id: string
@@ -21,116 +19,55 @@ interface Product {
 interface ProductCardProps {
   product: Product
   priority?: boolean
+  sizes?: string
 }
 
-export default function ProductCard({ product, priority = false }: ProductCardProps) {
+export default function ProductCard({ product, priority = false, sizes = '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw' }: ProductCardProps) {
   return (
-    <motion.div 
-      key={`product-${product.id}`}
-      className="group rounded-lg border bg-white p-3 shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden"
-      whileHover={{ 
-        y: -4,
-        transition: { duration: 0.2, ease: "easeOut" }
-      }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ 
-        duration: 0.4, 
-        ease: [0.25, 0.25, 0, 1],
-        delay: Math.min(0.1, Math.random() * 0.2) // Small random delay for stagger effect
-      }}
-    >
-      {/* Background gradient on hover */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-brand-light/20 to-brand-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        initial={false}
-      />
-      
-      <div className="aspect-square relative rounded overflow-hidden bg-gray-50">
+    <article className="group card-surface flex h-full flex-col overflow-hidden transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-brand-sky/40 hover:shadow-lift">
+      <div className="relative aspect-[4/5] overflow-hidden bg-brand-mist">
         {product.imageUrl ? (
-          <div
-            className="w-full h-full relative group-hover:scale-105 transition-transform duration-300 ease-out"
-          >
-            <Image 
-              src={product.imageUrl} 
-              alt={product.title} 
-              fill 
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              priority={priority}
-              quality={85}
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-              className="object-cover" 
-            />
-          </div>
+          <Image
+            src={product.imageUrl}
+            alt={product.title}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          />
         ) : (
-          <div 
-            className="w-full h-full flex items-center justify-center text-gray-400 group-hover:scale-110 transition-transform duration-200"
-          >
-            <div className="text-center">
-              <div 
-                className="text-2xl mb-2 animate-pulse"
-              >
-                📦
-              </div>
-              <div className="text-xs">Şəkil yoxdur</div>
-            </div>
+          <div className="flex size-full flex-col items-center justify-center gap-2 text-slate-400">
+            <Package className="size-8" aria-hidden />
+            <span className="text-xs">Şəkil yoxdur</span>
           </div>
         )}
-        
+
         {product.featured && (
-          <div 
-            className="absolute top-2 left-2 bg-brand-accent text-white text-xs px-2 py-1 rounded animate-bounce-in"
-          >
+          <span className="absolute left-3 top-3 rounded-full bg-brand-red px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-white shadow-sm">
             Seçilmiş
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col border-t border-border/70 p-4 sm:p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-brand-blue">{product.category?.name}</p>
+        <h3 className="mt-1.5 text-[0.98rem] font-semibold leading-snug text-brand-ink sm:text-base">{product.title}</h3>
+
+        {product.description && (
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-500">{product.description}</p>
+        )}
+
+        {(product.volume || product.packSize) && (
+          <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+            {product.volume && (
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{product.volume}</span>
+            )}
+            {product.packSize && (
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{product.packSize}</span>
+            )}
           </div>
         )}
       </div>
-      
-      <div 
-        className="mt-3 relative z-10 animate-slide-up-fade"
-      >
-        <div 
-          className="text-sm text-brand-primary font-medium group-hover:scale-105 transition-transform duration-200"
-        >
-          {product.category?.name}
-        </div>
-        <div 
-          className="font-semibold text-gray-900 mt-1 group-hover:text-brand-primary group-hover:translate-x-1 transition-all duration-200"
-        >
-          {product.title}
-        </div>
-        
-        {product.description && (
-          <p 
-            className="text-sm text-gray-600 mt-1 line-clamp-2 opacity-0 animate-slide-up-fade"
-            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-          >
-            {product.description}
-          </p>
-        )}
-        
-        <div 
-          className="flex items-center gap-2 mt-2 text-sm text-gray-500 opacity-0 animate-slide-up-fade"
-          style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
-        >
-          {product.volume && (
-            <span 
-              className="bg-gray-100 px-2 py-1 rounded text-xs hover:bg-brand-light hover:scale-105 active:scale-95 transition-all duration-200"
-            >
-              {product.volume}
-            </span>
-          )}
-          {product.packSize && (
-            <span 
-              className="bg-gray-100 px-2 py-1 rounded text-xs hover:bg-brand-light hover:scale-105 active:scale-95 transition-all duration-200"
-            >
-              {product.packSize}
-            </span>
-          )}
-        </div>
-      </div>
-    </motion.div>
+    </article>
   )
 }

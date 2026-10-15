@@ -1,7 +1,8 @@
-'use client'
-
+import { PackageSearch } from 'lucide-react'
+import Link from 'next/link'
 import ProductCard from './ProductCard'
-import { AnimatePresence, motion } from 'framer-motion'
+import Reveal from '@/components/motion/Reveal'
+import { cn } from '@/lib/utils'
 
 interface Product {
   id: string
@@ -21,34 +22,36 @@ interface Product {
 interface ProductGridProps {
   products: Product[]
   prioritizeFirst?: number
+  columns?: 3 | 4
 }
 
-export default function ProductGrid({ products, prioritizeFirst = 0 }: ProductGridProps) {
+export default function ProductGrid({ products, prioritizeFirst = 0, columns = 4 }: ProductGridProps) {
   if (!products.length) {
     return (
-      <motion.div 
-        className="text-center py-12"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="text-gray-400 text-4xl mb-4">📦</div>
-        <p className="text-gray-500">Məhsul tapılmadı.</p>
-      </motion.div>
+      <div className="card-surface flex flex-col items-center px-6 py-16 text-center">
+        <span className="grid size-14 place-items-center rounded-2xl bg-brand-mist text-brand-blue">
+          <PackageSearch className="size-7" aria-hidden />
+        </span>
+        <p className="mt-5 text-lg font-semibold text-brand-ink">Bu bölmədə hələ məhsul yoxdur</p>
+        <p className="mt-1 text-slate-500">Digər kateqoriyalara baxın və ya bizimlə əlaqə saxlayın.</p>
+        <Link href="/products" className="btn-outline mt-6">
+          Bütün məhsullar
+        </Link>
+      </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      <AnimatePresence mode="wait">
-        {products.map((product, index) => (
-          <ProductCard 
-            key={`${product.id}-${product.category.slug}`} // Better key for category filtering
-            product={product} 
+    <ul className={cn('grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3', columns === 4 && 'lg:grid-cols-4')}>
+      {products.map((product, index) => (
+        <Reveal as="li" key={product.id} delay={(index % columns) * 0.06}>
+          <ProductCard
+            product={product}
             priority={index < prioritizeFirst}
+            sizes={columns === 4 ? undefined : '(max-width: 768px) 50vw, 33vw'}
           />
-        ))}
-      </AnimatePresence>
-    </div>
+        </Reveal>
+      ))}
+    </ul>
   )
 }

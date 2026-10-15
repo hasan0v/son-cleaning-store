@@ -1,11 +1,6 @@
-import { getAllProducts, getCategories, getProductsByCategory } from '@/lib/data'
+import { getAllProducts, getCategoriesWithCounts, getProductsByCategory } from '@/lib/data'
 import ProductGrid from '@/components/products/ProductGrid'
 import CategoryFilter from '@/components/products/CategoryFilter'
-import Container from '@/components/layout/Container'
-import { Suspense } from 'react'
-
-// Enable static generation with revalidation
-export const revalidate = 1800 // Revalidate every 30 minutes
 
 export const metadata = {
   title: 'Təmizlik Məhsulları | Qabyuyan Maye, Ağardıcı, Təmizlik Vasitələri - SON Gəncə',
@@ -18,7 +13,7 @@ export const metadata = {
     url: 'https://son-temizlik.com/products',
     images: [
       {
-        url: '/logo.png',
+        url: '/brand/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'SON Təmizlik Məhsulları',
@@ -36,75 +31,43 @@ interface ProductsPageProps {
   }>
 }
 
-// Loading component for suspense
-function ProductsLoading() {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="animate-pulse">
-          <div className="aspect-square bg-gray-200 rounded-lg mb-3"></div>
-          <div className="h-4 bg-gray-200 rounded mb-2"></div>
-          <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-// Products content component with optimized loading
-async function ProductsContent({ categorySlug }: { categorySlug?: string }) {
-  const products = categorySlug 
-    ? await getProductsByCategory(categorySlug)
-    : await getAllProducts()
-
-  return <ProductGrid products={products} />
-}
-
-// Generate static params for known categories
-export async function generateStaticParams() {
-  const categories = await getCategories()
-  
-  return [
-    // Default products page
-    {},
-    // Category pages
-    ...categories.map((category) => ({
-      searchParams: { category: category.slug }
-    }))
-  ]
-}
-
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const categories = await getCategories()
-  const params = await searchParams
-  const selectedCategory = params.category
+  const { category: selectedSlug } = await searchParams
+  const [categories, products] = await Promise.all([
+    getCategoriesWithCounts(),
+    selectedSlug ? getProductsByCategory(selectedSlug) : getAllProducts(),
+  ])
+  const selected = categories.find((c) => c.slug === selectedSlug)
+  const total = categories.reduce((sum, c) => sum + c._count.products, 0)
 
   return (
-    <Container className="py-10">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
-            Məhsullar
-          </h1>
-          <p className="text-gray-600 mt-1">
-            {selectedCategory 
-              ? `${categories.find(c => c.slug === selectedCategory)?.name || 'Seçilmiş kateqoriya'} məhsulları`
-              : 'Bütün məhsullarımızı kəşf edin'
-            }
+    <>
+      <section className="relative overflow-hidden bg-brand-ink pb-14 pt-32 sm:pb-16 sm:pt-36">
+        <div aria-hidden className="absolute -right-32 -top-32 size-[30rem] rounded-full bg-brand-blue/30 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-40 left-1/4 size-96 rounded-full bg-brand-green/15 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="eyebrow !text-brand-sky">Kataloq</p>
+          <h1 className="mt-3 text-4xl font-bold text-white sm:text-5xl">{selected ? selected.name : 'Bütün məhsullar'}</h1>
+          <p className="mt-4 max-w-2xl text-lg text-white/70">
+            {selected
+              ? `${selected.name} kateqoriyasında ${products.length} məhsul. Topdan sifariş üçün bizimlə əlaqə saxlayın.`
+              : 'Qabyuyan maye, ağardıcı, maye sabun və xlor — ev və peşəkar istifadə üçün tam çeşid.'}
           </p>
         </div>
-        
-        <CategoryFilter 
-          categories={categories.map(c => ({ 
-            slug: c.slug, 
-            name: c.name 
-          }))} 
-        />
-      </div>
+      </section>
 
-      <Suspense fallback={<ProductsLoading />}>
-        <ProductsContent categorySlug={selectedCategory} />
-      </Suspense>
-    </Container>
+      <section className="py-10 sm:py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <CategoryFilter
+            categories={categories.map((c) => ({ slug: c.slug, name: c.name, count: c._count.products }))}
+            selected={selected?.slug}
+            total={total}
+          />
+          <div className="mt-8">
+            <ProductGrid products={products} prioritizeFirst={4} />
+          </div>
+        </div>
+      </section>
+    </>
   )
 }

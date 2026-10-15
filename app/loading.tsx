@@ -1,9 +1,9 @@
 export default function GlobalLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600">Yüklənir...</p>
+    <div className="grid min-h-[70vh] place-items-center pt-16" role="status">
+      <div className="flex flex-col items-center gap-4">
+        <div className="size-10 animate-spin rounded-full border-[3px] border-brand-mist border-t-brand-blue" />
+        <p className="text-sm text-slate-500">Yüklənir…</p>
       </div>
     </div>
   )

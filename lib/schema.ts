@@ -5,7 +5,7 @@ export const organizationSchema = {
   "name": "SON Təmizlik Məhsulları",
   "alternateName": ["SON", "SON Cleaning", "SON Temizlik"],
   "url": "https://son-temizlik.com",
-  "logo": "https://son-temizlik.com/logo.png",
+  "logo": "https://son-temizlik.com/brand/son-logo.png",
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer service",
@@ -30,7 +30,7 @@ export const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "SON Təmizlik Məhsulları",
-  "image": "https://son-temizlik.com/logo.png",
+  "image": "https://son-temizlik.com/brand/son-logo.png",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Zülfü Hacıyev 56",

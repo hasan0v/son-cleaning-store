@@ -8,14 +8,14 @@ import { submitContactAction } from '@/actions/contact'
 import { z } from 'zod'
 import emailjs from '@emailjs/browser'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { Loader2, Send } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { 
   getEmailJSConfig, 
   isEmailJSConfigValid, 
-  logEmailJSConfig,
   getEmailJSErrorMessage,
   logEmailJSError
 } from '@/lib/email-debug'
@@ -61,7 +61,6 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
         // Send emails via EmailJS if configured
         const emailConfig = getEmailJSConfig()
-        logEmailJSConfig(emailConfig)
 
         if (isEmailJSConfigValid(emailConfig)) {
           setIsEmailSending(true)
@@ -91,29 +90,18 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
               current_date: currentDate,
               message_id: result.id?.toString() || 'unknown'
             }
-
-            console.log('EmailJS template params:', {
-              ...emailTemplateParams,
-              reply_to: isValidEmail ? customerEmail : 'noreply@example.com (customer email invalid/missing)'
-            })
-
-            console.log('Sending admin notification email...')
             
             // Send admin notification email
-            const adminEmailResult = await emailjs.send(
+            await emailjs.send(
               emailConfig.serviceId!,
               emailConfig.templateId!,
               emailTemplateParams,
               emailConfig.publicKey!
             )
-            
-            console.log('Admin email sent successfully:', adminEmailResult.status, adminEmailResult.text)
 
             // Send customer auto-reply email if they provided a valid email and auto-reply template exists
             if (isValidEmail && emailConfig.autoReplyTemplateId) {
               try {
-                console.log('Sending customer auto-reply email...')
-                
                 // Create separate parameters for auto-reply (customer receives the email)
                 const autoReplyParams = {
                   ...emailTemplateParams,
@@ -122,21 +110,16 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
                   customer_name: data.name.trim(), // For personalization in template
                 }
                 
-                console.log('Auto-reply template params:', autoReplyParams)
-                
-                const autoReplyResult = await emailjs.send(
+                await emailjs.send(
                   emailConfig.serviceId!,
                   emailConfig.autoReplyTemplateId,
                   autoReplyParams,
                   emailConfig.publicKey!
                 )
-                console.log('Auto-reply email sent successfully:', autoReplyResult.status, autoReplyResult.text)
               } catch (autoReplyError) {
                 logEmailJSError(autoReplyError, 'Customer auto-reply email')
                 // Don't show error to user for auto-reply failure
               }
-            } else if (customerEmail && !isValidEmail) {
-              console.warn('Customer email provided but invalid, skipping auto-reply:', customerEmail)
             }
             
             toast.success('Mesajınız uğurla göndərildi! Tezliklə sizinlə əlaqə saxlayacağıq.')
@@ -161,96 +144,102 @@ export default function ContactForm({ className = '' }: ContactFormProps) {
 
   const isLoading = isPending || isEmailSending
 
+  const field = 'h-12 rounded-xl border-input bg-slate-50/60 px-4 text-base shadow-none transition-colors focus-visible:border-brand-blue focus-visible:bg-white focus-visible:ring-4 focus-visible:ring-brand-sky/15 md:text-[0.95rem]'
+  const invalid = 'border-destructive/60 bg-red-50/40'
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={`space-y-6 ${className}`}>
-      <div className="grid md:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className={`space-y-5 ${className}`}>
+      <div className="grid gap-5 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="name">
-            Ad Soyad <span className="text-red-500">*</span>
+          <Label htmlFor="name" className="text-sm font-medium text-brand-ink">
+            Ad, soyad <span className="text-brand-red">*</span>
           </Label>
           <Input
             id="name"
             type="text"
-            placeholder="Adınızı və soyadınızı yazın"
+            autoComplete="name"
+            placeholder="Adınız və soyadınız"
+            aria-invalid={!!errors.name}
             {...register('name')}
-            className={errors.name ? 'border-red-500' : ''}
+            className={cn(field, errors.name && invalid)}
           />
-          {errors.name && (
-            <p className="text-sm text-red-500">{errors.name.message}</p>
-          )}
+          {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="company">Şirkət</Label>
+          <Label htmlFor="company" className="text-sm font-medium text-brand-ink">Şirkət</Label>
           <Input
             id="company"
             type="text"
-            placeholder="Şirkət adı (məcburi deyil)"
+            autoComplete="organization"
+            placeholder="Şirkət adı (istəyə bağlı)"
             {...register('company')}
+            className={field}
           />
         </div>
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="email">E-poçt</Label>
+          <Label htmlFor="email" className="text-sm font-medium text-brand-ink">E-poçt</Label>
           <Input
             id="email"
             type="email"
-            placeholder="ornek@email.com"
+            autoComplete="email"
+            inputMode="email"
+            placeholder="ad@nümunə.az"
+            aria-invalid={!!errors.email}
             {...register('email')}
-            className={errors.email ? 'border-red-500' : ''}
+            className={cn(field, errors.email && invalid)}
           />
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
-          )}
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Telefon</Label>
+          <Label htmlFor="phone" className="text-sm font-medium text-brand-ink">Telefon</Label>
           <Input
             id="phone"
             type="tel"
+            autoComplete="tel"
+            inputMode="tel"
             placeholder="+994 XX XXX XX XX"
             {...register('phone')}
+            className={field}
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="message">
-          Mesaj <span className="text-red-500">*</span>
+        <Label htmlFor="message" className="text-sm font-medium text-brand-ink">
+          Mesaj <span className="text-brand-red">*</span>
         </Label>
         <Textarea
           id="message"
-          placeholder="Mesajınızı yazın..."
+          placeholder="Hansı məhsullar və hansı həcmdə maraqlandırır?"
           rows={5}
+          aria-invalid={!!errors.message}
           {...register('message')}
-          className={errors.message ? 'border-red-500' : ''}
+          className={cn(field, 'h-auto min-h-36 py-3', errors.message && invalid)}
         />
-        {errors.message && (
-          <p className="text-sm text-red-500">{errors.message.message}</p>
-        )}
+        {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
       </div>
 
-      <Button 
-        type="submit" 
-        disabled={isLoading}
-        className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90"
-      >
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            {isEmailSending ? 'E-poçt göndərilir...' : 'Göndərilir...'}
-          </div>
-        ) : (
-          'Mesaj Göndər'
-        )}
-      </Button>
-
-      <p className="text-xs text-gray-500">
-        <span className="text-red-500">*</span> Məcburi sahələr
-      </p>
+      <div className="flex flex-col-reverse gap-4 pt-1 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-slate-500">
+          <span className="text-brand-red">*</span> Məcburi sahələr
+        </p>
+        <button type="submit" disabled={isLoading} className="btn-primary w-full !py-3.5 sm:w-auto sm:!px-8">
+          {isLoading ? (
+            <>
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+              {isEmailSending ? 'E-poçt göndərilir…' : 'Göndərilir…'}
+            </>
+          ) : (
+            <>
+              Mesaj göndər
+              <Send className="size-4" aria-hidden />
+            </>
+          )}
+        </button>
+      </div>
     </form>
   )
 }

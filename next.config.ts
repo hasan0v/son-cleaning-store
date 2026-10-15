@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   
   // Image optimization
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000, // 1 year
@@ -27,38 +27,11 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb'
     },
-    optimizeCss: true,
     optimizePackageImports: [
       '@radix-ui/react-icons',
       'lucide-react',
-      'framer-motion',
     ],
     webVitalsAttribution: ['CLS', 'LCP']
-  },
-
-  // Bundle optimizations
-  webpack: (config, { dev, isServer }) => {
-    // Production optimizations
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            enforce: true,
-          },
-          common: {
-            name: 'common',
-            minChunks: 2,
-            priority: 10,
-            reuseExistingChunk: true,
-          },
-        },
-      };
-    }
-    return config;
   },
 
   async headers() {
@@ -108,15 +81,20 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/:path*.mp4',
+        source: '/media/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=86400', // Cache videos for 1 day
+            value: 'public, max-age=2592000, stale-while-revalidate=86400',
           },
+        ],
+      },
+      {
+        source: '/brand/:path*',
+        headers: [
           {
-            key: 'Content-Type',
-            value: 'video/mp4',
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, stale-while-revalidate=86400',
           },
         ],
       },

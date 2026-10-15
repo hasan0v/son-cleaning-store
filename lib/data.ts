@@ -12,6 +12,17 @@ export const getCategories = cache(
   { tags: [CATEGORIES_TAG] }
 )
 
+export const getCategoriesWithCounts = cache(
+  async () => {
+    return prisma.category.findMany({
+      orderBy: { name: 'asc' },
+      include: { _count: { select: { products: true } } },
+    })
+  },
+  ['categories', 'with-counts'],
+  { tags: [CATEGORIES_TAG, PRODUCTS_TAG] }
+)
+
 export const getFeaturedProducts = cache(
   async () => {
     return prisma.product.findMany({
